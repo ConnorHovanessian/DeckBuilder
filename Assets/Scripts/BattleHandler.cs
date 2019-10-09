@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 
 public class BattleHandler : MonoBehaviour
@@ -11,8 +12,7 @@ public class BattleHandler : MonoBehaviour
     
     public static BattleHandler GetInstance() {
         return instance;}
-
-
+    
     public delegate void OnDeathEventHandler();
     public event OnDeathEventHandler OnDeath;
 
@@ -23,8 +23,8 @@ public class BattleHandler : MonoBehaviour
 
     private float MAX_PLAYER_HEALTH = 100f;
     private float CURRENT_PLAYER_HEALTH = 100f;
-    private float MAX_ENEMY_HEALTH = 100f;
-    private float CURRENT_ENEMY_HEALTH = 100f;
+    private float MAX_ENEMY_HEALTH = 10f;
+    private float CURRENT_ENEMY_HEALTH = 10f;
     
     private Deck fullDeck;
     private Deck drawPile;
@@ -38,12 +38,6 @@ public class BattleHandler : MonoBehaviour
     {
         return handZone;
     }
-    
-
-    public void Start()
-    {
-            Playfield.GetInstance().OnCardPlayed += HandleCardPlayed;
-    }
 
     private void Awake()
     {
@@ -56,27 +50,47 @@ public class BattleHandler : MonoBehaviour
         victoryScreen = GameObject.Find("VictoryScreen");
         victoryScreen.SetActive(false);
 
+        MAX_PLAYER_HEALTH = GlobalValues.MaxHealth;
+        CURRENT_PLAYER_HEALTH = GlobalValues.CurrentHealth;
+        UpdateHealthBars();
 
+        /*
         List<GameObject> testDeck = new List<GameObject>();
-        List<GameObject> hand = new List<GameObject>();
         testDeck.Add(Instantiate(BattleAssets.GetInstance().Stab, new Vector3(0, 0, 0), Quaternion.identity));
         testDeck.Add(Instantiate(BattleAssets.GetInstance().Stab, new Vector3(0, 0, 0), Quaternion.identity));
         testDeck.Add(Instantiate(BattleAssets.GetInstance().Stab, new Vector3(0, 0, 0), Quaternion.identity));
         testDeck.Add(Instantiate(BattleAssets.GetInstance().Block, new Vector3(0, 0, 0), Quaternion.identity));
         testDeck.Add(Instantiate(BattleAssets.GetInstance().Block, new Vector3(0, 0, 0), Quaternion.identity));
         testDeck.Add(Instantiate(BattleAssets.GetInstance().Block, new Vector3(0, 0, 0), Quaternion.identity));
-        fullDeck = new Deck(testDeck);
-        fullDeck.ParentDeck();
+        fullDeck = new Deck(testDeck); 
+        */
 
+        Deck uninstantiatedDeck = GlobalValues.Deck;
         List<GameObject> emptyDeck = new List<GameObject>();
+        List<GameObject> testDeck = new List<GameObject>();
+
+        foreach (GameObject card in uninstantiatedDeck.GetCards())
+        {
+            testDeck.Add(Instantiate(card, new Vector3(0, 0, 0), Quaternion.identity));
+        }
+
+        fullDeck = new Deck(testDeck);
+        fullDeck.ParentDeckToHand();
+
         discardPile = new Deck(emptyDeck);
 
         drawPile = fullDeck;
         drawPile.Shuffle();
 
         DrawHand(BASE_CARD_DRAW);
-            
+
     }
+
+    public void Start()
+    {
+        Playfield.GetInstance().OnCardPlayed += HandleCardPlayed;
+    }
+
 
     private void DrawHand(int numToDraw)
     {
@@ -135,8 +149,6 @@ public class BattleHandler : MonoBehaviour
         Debug.Log("After Draw! DiscardPile:");
         foreach (GameObject c in BattleHandler.GetInstance().discardPile.GetCards())
             Debug.Log(c.ToString());
-
-
     }
 
     //HandleCardPlayed deactivates the card, so reparenting, turning on raycasts, and cleanup of placeholder must happen here
@@ -159,9 +171,6 @@ public class BattleHandler : MonoBehaviour
         cardObject.transform.SetParent(BattleHandler.GetInstance().GetHandZone().transform);
         cardObject.GetComponent<CanvasGroup>().blocksRaycasts = true;
         cardObject.SetActive(false);
-
-        
-
     }
 
     private void UpdateHealthBars()
@@ -169,19 +178,37 @@ public class BattleHandler : MonoBehaviour
         BattleAssets.GetInstance().SelfHPBar.text = CURRENT_PLAYER_HEALTH + "/" + MAX_PLAYER_HEALTH;
         BattleAssets.GetInstance().EnemyHPBar.text = CURRENT_ENEMY_HEALTH + "/" + MAX_ENEMY_HEALTH;
 
-        if (CURRENT_PLAYER_HEALTH <= 1f)
+        if (CURRENT_PLAYER_HEALTH <= 0f)
         {
-            gameOverScreen.SetActive(true);
+            GameOver();
         }
-        if (CURRENT_ENEMY_HEALTH <= 1f)
+        if (CURRENT_ENEMY_HEALTH <= 0f)
         {
-            victoryScreen.SetActive(true);
+            Victory();
         }
-
-
     }
 
-    private class Deck
+    private void GameOver()
+    {
+        gameOverScreen.SetActive(true);
+    }
+    private void Victory()
+    {
+        victoryScreen.SetActive(true);
+        StartCoroutine(LoadYourAsyncScene());
+    }
+
+    IEnumerator LoadYourAsyncScene()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Map");
+        // Wait until the asynchronous scene fully loads
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+    }
+
+    public class Deck
     {
         private List<GameObject> cards;
 
@@ -209,7 +236,7 @@ public class BattleHandler : MonoBehaviour
         }
 
         //Parent all cards in a deck to the hand
-        public void ParentDeck()
+        public void ParentDeckToHand()
         {
             foreach(GameObject card in this.cards)
             {

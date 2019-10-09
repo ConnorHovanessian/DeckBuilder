@@ -48,7 +48,6 @@ public class Playfield : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
         Draggable d = eventData.pointerDrag.GetComponent<Draggable>();
         if (d != null)
         {
-            //d.parentToReturnTo = this.transform;
         }
         GameObject card = eventData.pointerDrag.gameObject;
         OnCardPlayed?.Invoke(card);

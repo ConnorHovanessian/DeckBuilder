@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MapHandler : MonoBehaviour
 {
@@ -14,12 +15,104 @@ public class MapHandler : MonoBehaviour
 
     private void Awake()
     {
+        //If this is the first time map is loaded, instantiate global values
+        if(GlobalValues.MaxHealth == 0)
+        {
+            Debug.Log("Instantiating Global Values");
+            GlobalValues.MaxHealth = 80;
+            GlobalValues.CurrentHealth = GlobalValues.MaxHealth;
+            GlobalValues.Money = 100;
+            GlobalValues.Deck = InitializeDeck();
+        }
+
         SpawnTowns(NUMBER_OF_TOWNS_TO_SPAWN);
         foreach (Town t in towns)
             t.LogTown();
 
         townPlayerAt = FindPoorestTown();
         Instantiate(MapAssets.GetInstance().RedCircle, new Vector3(townPlayerAt.GetLocation().x, townPlayerAt.GetLocation().y-1, townPlayerAt.GetLocation().z), Quaternion.identity);
+    }
+    private BattleHandler.Deck InitializeDeck()
+    {
+        List<GameObject> testDeck = new List<GameObject>();
+        testDeck.Add(BattleAssets.GetInstance().Stab);
+        testDeck.Add(BattleAssets.GetInstance().Stab);
+        testDeck.Add(BattleAssets.GetInstance().Stab);
+        testDeck.Add(BattleAssets.GetInstance().Block);
+        testDeck.Add(BattleAssets.GetInstance().Block);
+        testDeck.Add(BattleAssets.GetInstance().Block);
+        return (new BattleHandler.Deck(testDeck));
+    }
+
+    void Update()
+    {
+        //Check if a town was clicked on
+        if (Input.GetMouseButtonDown(0))
+        {
+
+
+            Vector3 cursorPosition = findCursorPosition();
+            if (cursorPosition.x < -9000)
+            {
+                Debug.Log("cursor position negative");
+                return;
+            }
+            Town closest = towns[0];
+            foreach(Town town in towns)
+            {
+                if(  DistanceBetween(cursorPosition, closest.GetLocation()) > DistanceBetween(cursorPosition, town.GetLocation()) && DistanceBetween(cursorPosition, town.GetLocation()) < 100)
+                    closest = town;
+            }
+
+            Debug.Log("Distance to nearest town = " + DistanceBetween(cursorPosition, closest.GetLocation()));
+            Debug.Log("Cursor Position: " + cursorPosition.x + ", " + cursorPosition.y);
+            closest.LogTown();
+            if (DistanceBetween(cursorPosition, closest.GetLocation()) <= 4.1)
+            {
+                TravelToTown(closest);
+            }
+        }
+    }
+
+    private void TravelToTown(Town t)
+    {
+        //Save data to pass into next scene
+        //No data changes on map
+
+        // Use a coroutine to load the Scene in the background
+        StartCoroutine(LoadYourAsyncScene());
+    }
+
+    IEnumerator LoadYourAsyncScene()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Battle");
+        // Wait until the asynchronous scene fully loads
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+    }
+
+    public Vector3 findCursorPosition()
+    {
+        Vector2 cubeRay = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D cubeHit = Physics2D.Raycast(cubeRay, Vector2.zero);
+
+        if (cubeHit)
+        {
+            Debug.Log("We hit " + cubeHit.collider.name);
+            return new Vector3(cubeHit.point.x, cubeHit.point.y, 0); 
+        }
+        else
+        {
+            return (new Vector3(-9999,-9999,-9999));
+        }
+    }
+
+    public double DistanceBetween(Vector3 v1, Vector3 v2)
+    {
+        double distance = Math.Sqrt((double)(v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
+        return distance;
     }
 
     private Town FindPoorestTown()
@@ -31,7 +124,14 @@ public class MapHandler : MonoBehaviour
                 t = towns[i];
         }
         return t;
+    }
 
+    private double FindDistanceFromPlayer(Town t)
+    {
+        float x = townPlayerAt.GetLocation().x;
+        float y = townPlayerAt.GetLocation().y;
+        double distance = Math.Sqrt((double)(x - t.GetLocation().x) * (x - t.GetLocation().x) + (y - t.GetLocation().y) * (y - t.GetLocation().y));
+        return (distance);
     }
 
     private void SpawnTowns(int numTowns)
