@@ -195,6 +195,7 @@ public class BattleHandler : MonoBehaviour
     private void Victory()
     {
         victoryScreen.SetActive(true);
+        GlobalValues.Deck.Add(BattleAssets.GetInstance().Slam);
         StartCoroutine(LoadYourAsyncScene());
     }
 

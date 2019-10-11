@@ -67,12 +67,13 @@
     <Compile Include="Assets\Scripts\Card.cs" />
     <Compile Include="Assets\Scripts\Draggable.cs" />
     <Compile Include="Assets\Scripts\DropZone.cs" />
-    <Compile Include="Assets\Scripts\GloabalValues.cs" />
+    <Compile Include="Assets\Scripts\GlobalValues.cs" />
     <Compile Include="Assets\Scripts\MapAssets.cs" />
     <Compile Include="Assets\Scripts\MapHandler.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\Playfield.cs" />
     <Compile Include="Assets\Scripts\TownClickable.cs" />
+    <Compile Include="Assets\Scripts\TownHandler.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Connor/DeckBuilder/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

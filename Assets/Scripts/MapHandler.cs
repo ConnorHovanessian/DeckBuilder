@@ -23,15 +23,40 @@ public class MapHandler : MonoBehaviour
             GlobalValues.CurrentHealth = GlobalValues.MaxHealth;
             GlobalValues.Money = 100;
             GlobalValues.Deck = InitializeDeck();
+            GlobalValues.Towns = InitializeTowns();
+            GlobalValues.TownPlayerAt = townPlayerAt;
+        }
+        //If not, we load in our GlobalValues
+        else
+        {
+            Debug.Log("Loading Global Values");
+            towns = GlobalValues.Towns;
+            foreach(Town t in towns)
+            {
+                Instantiate(MapAssets.GetInstance().Town, new Vector3(t.GetLocation().x, t.GetLocation().y, t.GetLocation().z), Quaternion.identity);
+            }
+            townPlayerAt = GlobalValues.TownPlayerAt;
+            Instantiate(MapAssets.GetInstance().RedCircle, new Vector3(townPlayerAt.GetLocation().x, townPlayerAt.GetLocation().y - 1, townPlayerAt.GetLocation().z), Quaternion.identity);
         }
 
+        /*
         SpawnTowns(NUMBER_OF_TOWNS_TO_SPAWN);
         foreach (Town t in towns)
             t.LogTown();
 
         townPlayerAt = FindPoorestTown();
         Instantiate(MapAssets.GetInstance().RedCircle, new Vector3(townPlayerAt.GetLocation().x, townPlayerAt.GetLocation().y-1, townPlayerAt.GetLocation().z), Quaternion.identity);
+        */
     }
+
+    private Town[] InitializeTowns()
+    {
+        SpawnTowns(NUMBER_OF_TOWNS_TO_SPAWN);
+        townPlayerAt = FindPoorestTown();
+        Instantiate(MapAssets.GetInstance().RedCircle, new Vector3(townPlayerAt.GetLocation().x, townPlayerAt.GetLocation().y - 1, townPlayerAt.GetLocation().z), Quaternion.identity);
+        return towns;
+    }
+
     private BattleHandler.Deck InitializeDeck()
     {
         List<GameObject> testDeck = new List<GameObject>();
@@ -49,8 +74,6 @@ public class MapHandler : MonoBehaviour
         //Check if a town was clicked on
         if (Input.GetMouseButtonDown(0))
         {
-
-
             Vector3 cursorPosition = findCursorPosition();
             if (cursorPosition.x < -9000)
             {
@@ -67,25 +90,33 @@ public class MapHandler : MonoBehaviour
             Debug.Log("Distance to nearest town = " + DistanceBetween(cursorPosition, closest.GetLocation()));
             Debug.Log("Cursor Position: " + cursorPosition.x + ", " + cursorPosition.y);
             closest.LogTown();
-            if (DistanceBetween(cursorPosition, closest.GetLocation()) <= 4.1)
+            if (DistanceBetween(cursorPosition, closest.GetLocation()) <= 4.1 && closest != townPlayerAt)
             {
                 TravelToTown(closest);
             }
+            else if((DistanceBetween(cursorPosition, closest.GetLocation()) <= 4.1 && closest == townPlayerAt))
+            {
+                EnterTown(closest);
+            }
         }
+    }
+
+    private void EnterTown(Town t)
+    {
+        StartCoroutine(LoadYourAsyncScene("Town"));
     }
 
     private void TravelToTown(Town t)
     {
         //Save data to pass into next scene
-        //No data changes on map
-
+        GlobalValues.TownPlayerAt = t;
         // Use a coroutine to load the Scene in the background
-        StartCoroutine(LoadYourAsyncScene());
+        StartCoroutine(LoadYourAsyncScene("Battle"));
     }
 
-    IEnumerator LoadYourAsyncScene()
+    IEnumerator LoadYourAsyncScene(String str)
     {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Battle");
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(str);
         // Wait until the asynchronous scene fully loads
         while (!asyncLoad.isDone)
         {
@@ -178,7 +209,7 @@ public class MapHandler : MonoBehaviour
         return true;
     }
 
-    private class Town
+    public class Town
     {
         Vector3 location;
         string name;
@@ -250,6 +281,15 @@ public class MapHandler : MonoBehaviour
             ret[0] = "slopPrice: " + slopPrice;
             ret[1] = "kikiPrice: " + kikiPrice;
             ret[2] = "boubaPrice: " + boubaPrice;
+            return ret;
+        }
+
+        public int[] GetPricesInt()
+        {
+            int[] ret = new int[3];
+            ret[0] = slopPrice;
+            ret[1] = kikiPrice;
+            ret[2] = boubaPrice;
             return ret;
         }
 

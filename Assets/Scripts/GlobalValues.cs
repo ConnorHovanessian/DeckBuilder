@@ -2,6 +2,8 @@
 {
     private static int currentHealth, maxHealth, money;
     private static BattleHandler.Deck deck;
+    private static MapHandler.Town[] towns;
+    private static MapHandler.Town townPlayerAt;
 
     public static int CurrentHealth
     {
@@ -12,6 +14,29 @@
         set
         {
             currentHealth = value;
+        }
+    }
+    public static MapHandler.Town TownPlayerAt
+    {
+        get
+        {
+            return townPlayerAt;
+        }
+        set
+        {
+            townPlayerAt = value;
+        }
+    }
+
+    public static MapHandler.Town[] Towns
+    {
+        get
+        {
+            return towns;
+        }
+        set
+        {
+            towns = value;
         }
     }
 

@@ -24,7 +24,10 @@ public class BattleAssets : MonoBehaviour
     public Text EnemyHPBar;
 
     public GameObject EmptyCard;
+    //Attacks
     public GameObject Stab;
+    public GameObject Slam;
+    //Skills
     public GameObject Block;
 
 }
