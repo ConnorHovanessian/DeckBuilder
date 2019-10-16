@@ -19,6 +19,7 @@ public class MapHandler : MonoBehaviour
         if(GlobalValues.MaxHealth == 0)
         {
             Debug.Log("Instantiating Global Values");
+            GlobalValues.CurrentScene = GlobalValues.Scene.Map;
             GlobalValues.MaxHealth = 80;
             GlobalValues.CurrentHealth = GlobalValues.MaxHealth;
             GlobalValues.Money = 100;
@@ -29,6 +30,7 @@ public class MapHandler : MonoBehaviour
         //If not, we load in our GlobalValues
         else
         {
+            GlobalValues.CurrentScene = GlobalValues.Scene.Map;
             Debug.Log("Loading Global Values");
             towns = GlobalValues.Towns;
             foreach(Town t in towns)

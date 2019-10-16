@@ -996,6 +996,9 @@ MonoBehaviour:
   Stab: {fileID: 1562878957723350, guid: 3799d5daa3eafe44b90edc3f71f9b9a2, type: 3}
   Slam: {fileID: 1562878957723350, guid: 1c8c8a8c930959d41a3d11b6e6e06521, type: 3}
   Block: {fileID: 1562878957723350, guid: f6a6fb6c4a164f349895eb90251f772d, type: 3}
+  Kiki: {fileID: 1562878957723350, guid: 6a59ae10128c166448162ae782f68515, type: 3}
+  Bouba: {fileID: 1562878957723350, guid: 89def55d08de78b418dac2360995007b, type: 3}
+  Slop: {fileID: 1562878957723350, guid: 64008c4b0205e8842822ddc50ff71fb1, type: 3}
 --- !u!1 &1126994777
 GameObject:
   m_ObjectHideFlags: 0

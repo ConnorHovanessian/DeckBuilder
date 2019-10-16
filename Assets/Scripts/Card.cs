@@ -16,5 +16,6 @@ public class Card : MonoBehaviour
 
     public int damage;
     public int block;
+    public int? price;
 
 }

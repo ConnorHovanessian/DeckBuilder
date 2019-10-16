@@ -5,6 +5,21 @@
     private static MapHandler.Town[] towns;
     private static MapHandler.Town townPlayerAt;
 
+    public enum Scene { Battle, Map, Town }
+    private static Scene currentScene;
+
+    public static Scene CurrentScene
+    {
+        get
+        {
+            return currentScene;
+        }
+        set
+        {
+            currentScene = value;
+        }
+    }
+
     public static int CurrentHealth
     {
         get
@@ -75,4 +90,5 @@
             deck = value;
         }
     }
+
 }

@@ -38,7 +38,5 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         {
             d.parentToReturnTo = this.transform;
         }
-
-        Debug.Log("Dropzone on drop, parent is :" + d.parentToReturnTo);
     }
 }

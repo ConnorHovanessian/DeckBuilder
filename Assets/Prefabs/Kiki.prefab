@@ -294,9 +294,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fb1b187c6ba43744891a4f11a14ae9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardName: BaseCard
+  cardName: Kiki
   target: 0
-  damage: 0
+  damage: 30
   block: 0
 --- !u!1 &1980400619067870
 GameObject:

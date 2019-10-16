@@ -18,10 +18,23 @@ public class BattleAssets : MonoBehaviour
         instance = this;
     }
 
+    private void Start()
+    {
+        GameObject[] Cards = new GameObject[] { Stab, Slam, Block, Kiki, Bouba, Slop };
+    }
+
+    public void GetCards(List<GameObject> list)
+    {
+        list.Add(Stab);
+        list.Add(Slam);
+        list.Add(Kiki);
+    }
+
     public Sprite idle1;
 
     public Text SelfHPBar;
     public Text EnemyHPBar;
+    public Text PriceText;
 
     public GameObject EmptyCard;
     //Attacks
@@ -29,5 +42,11 @@ public class BattleAssets : MonoBehaviour
     public GameObject Slam;
     //Skills
     public GameObject Block;
+    //Consumables
+    public GameObject Kiki;
+    public GameObject Bouba;
+    public GameObject Slop;
+
+    public GameObject[] Cards;
 
 }

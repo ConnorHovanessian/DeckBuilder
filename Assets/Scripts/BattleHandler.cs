@@ -49,6 +49,7 @@ public class BattleHandler : MonoBehaviour
 
         victoryScreen = GameObject.Find("VictoryScreen");
         victoryScreen.SetActive(false);
+        GlobalValues.CurrentScene = GlobalValues.Scene.Battle;
 
         MAX_PLAYER_HEALTH = GlobalValues.MaxHealth;
         CURRENT_PLAYER_HEALTH = GlobalValues.CurrentHealth;
@@ -71,6 +72,7 @@ public class BattleHandler : MonoBehaviour
 
         foreach (GameObject card in uninstantiatedDeck.GetCards())
         {
+            Debug.Log("Card being instantiated: " + card);
             testDeck.Add(Instantiate(card, new Vector3(0, 0, 0), Quaternion.identity));
         }
 
@@ -122,7 +124,6 @@ public class BattleHandler : MonoBehaviour
     {
     CURRENT_PLAYER_HEALTH -= 10f;
     UpdateHealthBars();
-    
     }
 
     void Update()
@@ -195,7 +196,6 @@ public class BattleHandler : MonoBehaviour
     private void Victory()
     {
         victoryScreen.SetActive(true);
-        GlobalValues.Deck.Add(BattleAssets.GetInstance().Slam);
         StartCoroutine(LoadYourAsyncScene());
     }
 
