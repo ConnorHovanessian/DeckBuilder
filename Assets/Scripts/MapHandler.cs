@@ -270,11 +270,16 @@ public class MapHandler : MonoBehaviour
         int kikiMax = 75;
         int boubaMax = 75;
 
+        IDictionary<string, int> priceDictionary = new Dictionary<string, int>();
+
         public Economy()
         {
             slopPrice = rng.Next(slopMin, slopMax);
             kikiPrice = rng.Next(kikiMin, kikiMax);
             boubaPrice = rng.Next(boubaMin, boubaMax);
+            priceDictionary.Add("Slop", slopPrice);
+            priceDictionary.Add("Kiki", kikiPrice);
+            priceDictionary.Add("Bouba", boubaPrice);
         }
 
         public string[] GetPrices()
@@ -285,7 +290,10 @@ public class MapHandler : MonoBehaviour
             ret[2] = "boubaPrice: " + boubaPrice;
             return ret;
         }
-
+        public IDictionary<string, int> GetPricesDictionary()
+        {
+            return priceDictionary;
+        }
         public int[] GetPricesInt()
         {
             int[] ret = new int[3];

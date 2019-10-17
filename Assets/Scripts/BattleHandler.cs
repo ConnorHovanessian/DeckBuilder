@@ -236,6 +236,29 @@ public class BattleHandler : MonoBehaviour
             }
         }
 
+        public bool Contains(GameObject card)
+        {
+            foreach(GameObject c in cards)
+            {
+                if (c.GetComponent<Card>().cardName == card.GetComponent<Card>().cardName)
+                    return true;
+            }
+            return false;
+        }
+
+        //Removes the first card with the same name in the deck
+        public void Remove(GameObject card)
+        {
+            foreach (GameObject c in cards)
+            {
+                if (c.GetComponent<Card>().cardName == card.GetComponent<Card>().cardName)
+                {
+                    cards.Remove(c);
+                    return;
+                }
+            }
+        }
+
         //Parent all cards in a deck to the hand
         public void ParentDeckToHand()
         {

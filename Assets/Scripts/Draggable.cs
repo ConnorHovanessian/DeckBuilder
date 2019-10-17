@@ -22,7 +22,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         if (GlobalValues.CurrentScene == GlobalValues.Scene.Town)
         {
-            Debug.Log("I was clicked in a shop");
             OnCardClicked?.Invoke(this.gameObject);
         }
     }

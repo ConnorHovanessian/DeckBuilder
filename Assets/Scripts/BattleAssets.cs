@@ -26,8 +26,11 @@ public class BattleAssets : MonoBehaviour
     public void GetCards(List<GameObject> list)
     {
         list.Add(Stab);
+        list.Add(Block);
         list.Add(Slam);
+        list.Add(Slop);
         list.Add(Kiki);
+        list.Add(Bouba);
     }
 
     public Sprite idle1;
